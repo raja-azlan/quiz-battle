@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  auth_service:
+    build: ./auth_service
+    ports:
+      - "8001:8000"
+    environment:
+      - JWT_SECRET=dev-shared-jwt-secret-change-me
+      - INTERNAL_API_KEY=dev-internal-key-change-me
+      - DJANGO_DEBUG=True
+
+  game_service:
+    build: ./game_service
+    ports:
+      - "8002:8000"
+    environment:
+      - JWT_SECRET=dev-shared-jwt-secret-change-me
+      - INTERNAL_API_KEY=dev-internal-key-change-me
+      - AUTH_SERVICE_URL=http://auth_service:8000
+      - DJANGO_DEBUG=True
+    depends_on:
+      - auth_service
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_AUTH_API_URL=http://localhost:8001
+      - VITE_GAME_API_URL=http://localhost:8002
+    depends_on:
+      - auth_service
+      - game_service
