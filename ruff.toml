@@ -1,0 +1,10 @@
+line-length = 110
+
+# Django migrations are generated files, so don't lint them.
+extend-exclude = ["migrations"]
+
+[lint]
+# E  = pycodestyle errors
+# F  = Pyflakes errors
+# I  = import sorting
+select = ["E", "F", "I"]

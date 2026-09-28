@@ -1,0 +1,156 @@
+name: quiz-battle
+
+run-name: '${{ github.actor }} is deploying quiz battle CI'
+
+'on':
+  push:
+    branches:
+      - develop
+
+  pull_request:
+    branches:
+      - develop
+    types:
+      - opened
+
+jobs:
+
+  # Frontend linting
+  fe_job:
+    name: Frontend Job
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.12.0'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint Code
+        run: npm run lint
+
+  # Matrix runs the same validation for auth_service and game_service
+  be_jobs:
+    name: 'Backend - ${{ matrix.service }}'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - auth_service
+          - game_service
+
+    defaults:
+      run:
+        working-directory: './${{ matrix.service }}'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Ruff lint dependency
+        run: pip install -r ../requirements-dev.txt
+
+      - name: Run Lint
+        run: ruff check .
+
+      - name: Check Migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Run Tests
+        run: python manage.py test
+
+  # Build and push images only when all validation passes
+  build_and_push:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+
+    needs:
+      - fe_job
+      - be_jobs
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/quiz-battle-frontend:${{ github.sha }}
+
+      - name: Build and Push Auth Service
+        uses: docker/build-push-action@v6
+        with:
+          context: ./auth_service
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/quiz-battle-auth:${{ github.sha }}
+
+      - name: Build and Push Game Service
+        uses: docker/build-push-action@v6
+        with:
+          context: ./game_service
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/quiz-battle-game:${{ github.sha }}
+
+  # Always report the final CI result to Slack
+  slack:
+    name: Slack Notification
+
+    needs:
+      - fe_job
+      - be_jobs
+      - build_and_push
+
+    if: always()
+
+    steps:
+      - name: Determine CI Status
+        run: |
+          if [[ "${{ needs.fe_job.result }}" == "success" &&
+                "${{ needs.be_jobs.result }}" == "success" &&
+                "${{ needs.build_and_push.result }}" == "success" ]]; then
+            echo "CI_STATUS=PASS" >> "$GITHUB_ENV"
+          else
+            echo "CI_STATUS=FAIL" >> "$GITHUB_ENV"
+          fi
+
+      - name: Send Slack Notification
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: |
+              Quiz Battle CI
+              Status: ${{ env.CI_STATUS }}
+              Branch: ${{ github.ref_name }}
+              Commit: ${{ github.sha }}
+              Triggered by: ${{ github.actor }}

@@ -32,18 +32,35 @@ async function joinRoom() {
 <template>
   <div class="card">
     <h1>Lobby</h1>
-    <p v-if="error" class="error">{{ error }}</p>
+    <p
+      v-if="error"
+      class="error"
+    >
+      {{ error }}
+    </p>
 
     <section>
       <h2>Start a new match</h2>
-      <button @click="createRoom">Create room</button>
+      <button @click="createRoom">
+        Create room
+      </button>
     </section>
 
     <section>
       <h2>Join a match</h2>
       <form @submit.prevent="joinRoom">
-        <input v-model="joinCode" placeholder="Room code" maxlength="6" required />
-        <button type="submit" style="margin-top: 0.75rem">Join</button>
+        <input
+          v-model="joinCode"
+          placeholder="Room code"
+          maxlength="6"
+          required
+        >
+        <button
+          type="submit"
+          style="margin-top: 0.75rem"
+        >
+          Join
+        </button>
       </form>
     </section>
   </div>

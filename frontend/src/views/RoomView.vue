@@ -59,13 +59,23 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="card" v-if="room">
+  <div
+    class="card"
+    v-if="room"
+  >
     <h1>Room {{ room.code }}</h1>
-    <p v-if="error" class="error">{{ error }}</p>
+    <p
+      v-if="error"
+      class="error"
+    >
+      {{ error }}
+    </p>
 
     <div v-if="room.status === 'waiting'">
       <p>Waiting for an opponent. Share this code:</p>
-      <p class="room-code">{{ room.code }}</p>
+      <p class="room-code">
+        {{ room.code }}
+      </p>
     </div>
 
     <template v-else>
@@ -74,23 +84,49 @@ onUnmounted(() => {
         <div><strong>{{ opponent?.username ?? "…" }}</strong>: {{ opponent?.score ?? 0 }}</div>
       </div>
 
-      <div v-if="room.status === 'finished'" class="result">
-        <h2 v-if="me.score > opponent.score">You won!</h2>
-        <h2 v-else-if="me.score < opponent.score">You lost.</h2>
-        <h2 v-else>It's a tie!</h2>
-        <router-link to="/lobby">Back to lobby</router-link>
+      <div
+        v-if="room.status === 'finished'"
+        class="result"
+      >
+        <h2 v-if="me.score > opponent.score">
+          You won!
+        </h2>
+        <h2 v-else-if="me.score < opponent.score">
+          You lost.
+        </h2>
+        <h2 v-else>
+          It's a tie!
+        </h2>
+        <router-link to="/lobby">
+          Back to lobby
+        </router-link>
       </div>
 
       <div v-else-if="!myFinished && currentQuestion">
         <h2>{{ currentQuestion.text }}</h2>
         <div class="choices">
-          <label v-for="choice in ['a', 'b', 'c', 'd']" :key="choice">
-            <input type="radio" name="choice" :value="choice" v-model="selected" />
+          <label
+            v-for="choice in ['a', 'b', 'c', 'd']"
+            :key="choice"
+          >
+            <input
+              type="radio"
+              name="choice"
+              :value="choice"
+              v-model="selected"
+            >
             {{ currentQuestion[`choice_${choice}`] }}
           </label>
         </div>
-        <p v-if="feedback">{{ feedback }}</p>
-        <button @click="submitAnswer" :disabled="!selected">Submit answer</button>
+        <p v-if="feedback">
+          {{ feedback }}
+        </p>
+        <button
+          @click="submitAnswer"
+          :disabled="!selected"
+        >
+          Submit answer
+        </button>
         <p>Question {{ currentIndex + 1 }} of {{ questions.length }}</p>
       </div>
 
@@ -103,5 +139,10 @@ onUnmounted(() => {
       </div>
     </template>
   </div>
-  <div v-else class="card">Loading room…</div>
+  <div
+    v-else
+    class="card"
+  >
+    Loading room…
+  </div>
 </template>

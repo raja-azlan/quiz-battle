@@ -13,15 +13,28 @@ function logout() {
 <template>
   <div class="app">
     <header class="nav">
-      <router-link to="/lobby" class="brand">Quiz Battle</router-link>
+      <router-link
+        to="/lobby"
+        class="brand"
+      >
+        Quiz Battle
+      </router-link>
       <nav v-if="auth.token">
         <span class="username">{{ auth.username }}</span>
-        <router-link to="/profile">Stats</router-link>
-        <button @click="logout">Log out</button>
+        <router-link to="/profile">
+          Stats
+        </router-link>
+        <button @click="logout">
+          Log out
+        </button>
       </nav>
       <nav v-else>
-        <router-link to="/login">Login</router-link>
-        <router-link to="/register">Register</router-link>
+        <router-link to="/login">
+          Login
+        </router-link>
+        <router-link to="/register">
+          Register
+        </router-link>
       </nav>
     </header>
     <main>

@@ -18,7 +18,12 @@ onMounted(async () => {
 <template>
   <div class="card">
     <h1>Your stats</h1>
-    <p v-if="error" class="error">{{ error }}</p>
+    <p
+      v-if="error"
+      class="error"
+    >
+      {{ error }}
+    </p>
     <ul v-if="stats">
       <li>Games played: {{ stats.games_played }}</li>
       <li>Wins: {{ stats.wins }}</li>

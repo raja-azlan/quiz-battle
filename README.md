@@ -76,7 +76,7 @@ Each service is a normal Django project:
 
 ```bash
 cd auth_service
-python -m venv .venv && .venv\Scripts\activate   # or source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver 8001
@@ -84,7 +84,7 @@ python manage.py runserver 8001
 
 ```bash
 cd game_service
-python -m venv .venv && .venv\Scripts\activate
+python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py seed_questions

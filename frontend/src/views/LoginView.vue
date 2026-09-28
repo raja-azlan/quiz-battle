@@ -22,18 +22,39 @@ async function submit() {
 </script>
 
 <template>
-  <form class="card" @submit.prevent="submit">
+  <form
+    class="card"
+    @submit.prevent="submit"
+  >
     <h1>Log in</h1>
     <label>
       Username
-      <input v-model="username" required />
+      <input
+        v-model="username"
+        required
+      >
     </label>
     <label>
       Password
-      <input v-model="password" type="password" required />
+      <input
+        v-model="password"
+        type="password"
+        required
+      >
     </label>
-    <p v-if="error" class="error">{{ error }}</p>
-    <button type="submit">Log in</button>
-    <p>No account? <router-link to="/register">Register</router-link></p>
+    <p
+      v-if="error"
+      class="error"
+    >
+      {{ error }}
+    </p>
+    <button type="submit">
+      Log in
+    </button>
+    <p>
+      No account? <router-link to="/register">
+        Register
+      </router-link>
+    </p>
   </form>
 </template>
