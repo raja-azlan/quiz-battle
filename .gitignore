@@ -5,5 +5,4 @@ db.sqlite3
 venv/
 node_modules/
 dist/
-package-lock.json
 .ruff_cache/
