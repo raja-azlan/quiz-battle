@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { gameApi } from "../api";
 import { auth } from "../store";
 
-const props = defineProps({ code: String });
+const props = defineProps({ code: { type: String, required: true } });
 
 const room = ref(null);
 const questions = ref([]);
