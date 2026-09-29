@@ -32,3 +32,4 @@ export function clearAuth() {
   auth.userId = null;
   auth.username = null;
 }
+// success CI
