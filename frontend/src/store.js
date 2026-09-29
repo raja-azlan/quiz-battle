@@ -2,6 +2,8 @@ import { reactive, watch } from "vue";
 
 const STORAGE_KEY = "quizBattleAuth";
 const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+// To demonstrate for failure adding this unused var
+const failureVariable = 123
 
 export const auth = reactive({
   token: stored?.token || null,
